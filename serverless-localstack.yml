@@ -1,0 +1,32 @@
+service: homeboy-sls-local
+
+frameworkVersion: ">=1.1.0"
+
+plugins:
+  - serverless-localstack
+
+custom:
+  bucket: test
+  localstack:
+    stages:
+      # list of stages for which the plugin should be enabled
+      - local
+    host: http://localhost  # optional - LocalStack host to connect to
+    edgePort: 4566  # optional - LocalStack edge port to connect to
+    # endpointFile: build/endpoints.json
+    # lambda: # only when lambda need to be run as a container
+    #   mountCode: True
+
+provider:
+  name: aws
+  runtime: python3.7
+
+functions:
+  create:
+    handler: events/provision.create
+    events:
+      - http:
+          path: provisioner
+          method: post
+          integration: lambda
+
